@@ -97,16 +97,20 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
                       : "text-sidebar-foreground hover:bg-sidebar-accent/50"
                   )}
                 >
-                  <item.icon className={cn("flex-shrink-0", isActive ? "text-cyan" : "")} size={20} />
-                  
-                  {!collapsed && (
-                    <span className="ml-3 font-medium">{item.label}</span>
-                  )}
-                  
-                  {collapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                      {item.label}
-                    </div>
+                  {({ isActive }) => (
+                    <>
+                      <item.icon className={cn("flex-shrink-0", isActive ? "text-cyan" : "")} size={20} />
+                      
+                      {!collapsed && (
+                        <span className="ml-3 font-medium">{item.label}</span>
+                      )}
+                      
+                      {collapsed && (
+                        <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                          {item.label}
+                        </div>
+                      )}
+                    </>
                   )}
                 </NavLink>
               </li>
