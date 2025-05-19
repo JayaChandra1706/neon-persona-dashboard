@@ -73,6 +73,7 @@ interface UserProfile {
   avatar?: string;
   goals: Goals;
   useMetricSystem: boolean; // New property to track unit preference
+  currency: 'USD' | 'INR'; // Added currency preference
 }
 
 interface AppState {
@@ -259,7 +260,8 @@ const initialState: AppState = {
       dailyWater: 2.4, // Updated from 80 oz to 2.4 liters
       targetWeight: 77 // Updated from 170 lbs to 77 kg
     },
-    useMetricSystem: true // Default to metric system
+    useMetricSystem: true, // Default to metric system
+    currency: 'INR' // Default to INR for India
   },
   isDarkMode: true
 };
@@ -524,15 +526,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return totalAssets - totalLiabilities;
   };
 
+  // Update getNetWorthHistory to use INR
   const getNetWorthHistory = () => {
     // In a real app, this would calculate based on historical data
-    // For now, we'll just return mock data
+    // For now, we'll just return mock data in INR (roughly converted)
     return [
-      { date: '2025-01-01', value: 40000 },
-      { date: '2025-02-01', value: 42000 },
-      { date: '2025-03-01', value: 43500 },
-      { date: '2025-04-01', value: 45000 },
-      { date: '2025-05-01', value: 48000 },
+      { date: '2025-01-01', value: 3300000 },  // ~40000 USD → INR
+      { date: '2025-02-01', value: 3465000 },  // ~42000 USD → INR
+      { date: '2025-03-01', value: 3588750 },  // ~43500 USD → INR
+      { date: '2025-04-01', value: 3712500 },  // ~45000 USD → INR
+      { date: '2025-05-01', value: 3960000 },  // ~48000 USD → INR
     ];
   };
 

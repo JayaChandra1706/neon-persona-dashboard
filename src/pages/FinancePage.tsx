@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAppContext } from '@/contexts/AppContext';
 import DashboardCard from '@/components/DashboardCard';
@@ -8,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Edit, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
+import { Plus, Edit, Trash2, TrendingUp, TrendingDown, BadgeIndianRupee } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -277,11 +276,11 @@ const FinancePage = () => {
     }
   };
 
-  // Format currency
+  // Format currency - updated to Indian Rupees
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'INR',
       maximumFractionDigits: 0
     }).format(value);
   };
@@ -293,7 +292,8 @@ const FinancePage = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <DashboardCard title="Net Worth" variant="magenta">
-          <div className="text-2xl font-bold">
+          <div className="text-2xl font-bold flex items-center">
+            <BadgeIndianRupee className="inline-block mr-1" size={20} />
             {formatCurrency(netWorth)}
           </div>
           <div className="text-sm text-muted-foreground">
@@ -302,7 +302,8 @@ const FinancePage = () => {
         </DashboardCard>
         
         <DashboardCard title="Income" variant="cyan">
-          <div className="text-2xl font-bold text-green-400">
+          <div className="text-2xl font-bold text-green-400 flex items-center">
+            <BadgeIndianRupee className="inline-block mr-1" size={20} />
             {formatCurrency(totalIncome)}
           </div>
           <div className="text-sm text-muted-foreground">
@@ -311,7 +312,8 @@ const FinancePage = () => {
         </DashboardCard>
         
         <DashboardCard title="Expenses" variant="cyan">
-          <div className="text-2xl font-bold text-red-400">
+          <div className="text-2xl font-bold text-red-400 flex items-center">
+            <BadgeIndianRupee className="inline-block mr-1" size={20} />
             {formatCurrency(totalExpenses)}
           </div>
           <div className="text-sm text-muted-foreground">
@@ -320,7 +322,8 @@ const FinancePage = () => {
         </DashboardCard>
         
         <DashboardCard title="Balance" variant="cyan">
-          <div className="text-2xl font-bold">
+          <div className="text-2xl font-bold flex items-center">
+            <BadgeIndianRupee className="inline-block mr-1" size={20} />
             {formatCurrency(totalIncome - totalExpenses)}
           </div>
           <div className="text-sm text-muted-foreground">
@@ -334,7 +337,7 @@ const FinancePage = () => {
         <LineChart 
           data={netWorthHistory} 
           color="#FF00FF" 
-          formatYAxis={(value) => `$${value / 1000}k`}
+          formatYAxis={(value) => `₹${value / 1000}k`}
           formatTooltip={(value) => formatCurrency(value)}
         />
       </DashboardCard>
