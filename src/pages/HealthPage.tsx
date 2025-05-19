@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAppContext } from '@/contexts/AppContext';
 import DashboardCard from '@/components/DashboardCard';
@@ -6,7 +7,7 @@ import ProgressCircle from '@/components/charts/ProgressCircle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Edit } from 'lucide-react';
+import { Plus, Edit, Droplet, Weight } from 'lucide-react';
 import { format, parseISO, startOfToday, isValid } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -38,7 +39,7 @@ const HealthPage = () => {
       value: entry.weight as number
     }));
   
-  // Calculate daily progress - UPDATE HERE to use profile.goals
+  // Calculate daily progress - using profile.goals
   const calorieProgress = todayEntry ? (todayEntry.calories / state.profile.goals.dailyCalories) * 100 : 0;
   const proteinProgress = todayEntry ? (todayEntry.protein / state.profile.goals.dailyProtein) * 100 : 0;
   const waterProgress = todayEntry ? (todayEntry.water / state.profile.goals.dailyWater) * 100 : 0;
@@ -101,7 +102,7 @@ const HealthPage = () => {
         protein: parseInt(formData.protein) || 0,
         carbs: parseInt(formData.carbs) || 0,
         fat: parseInt(formData.fat) || 0,
-        water: parseInt(formData.water) || 0,
+        water: parseFloat(formData.water) || 0,
         weight: formData.weight ? parseFloat(formData.weight) : undefined
       };
       
@@ -175,10 +176,11 @@ const HealthPage = () => {
             <ProgressCircle percentage={Math.round(waterProgress)} color="#00FFFF">
               <div className="flex flex-col items-center">
                 <span className="text-2xl font-bold">
-                  {todayEntry ? todayEntry.water : 0}oz
+                  <Droplet size={16} className="inline mr-1" />
+                  {todayEntry ? todayEntry.water : 0}L
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  of {state.profile.goals.dailyWater}oz
+                  of {state.profile.goals.dailyWater}L
                 </span>
               </div>
             </ProgressCircle>
@@ -196,20 +198,21 @@ const HealthPage = () => {
             <LineChart 
               data={weightHistory} 
               color="#FF00FF" 
-              formatYAxis={(value) => `${value} lbs`}
-              formatTooltip={(value) => `${value} lbs`}
+              formatYAxis={(value) => `${value} kg`}
+              formatTooltip={(value) => `${value} kg`}
             />
             <div className="flex justify-between text-sm text-muted-foreground">
               <div>
                 <span className="block">Current</span>
                 <span className="font-medium text-foreground">
-                  {weightHistory[weightHistory.length - 1].value} lbs
+                  <Weight size={16} className="inline mr-1" />
+                  {weightHistory[weightHistory.length - 1].value} kg
                 </span>
               </div>
               <div>
                 <span className="block">Target</span>
                 <span className="font-medium text-foreground">
-                  {state.profile.goals.targetWeight || 'Not set'} lbs
+                  {state.profile.goals.targetWeight || 'Not set'} kg
                 </span>
               </div>
               <div>
@@ -225,7 +228,7 @@ const HealthPage = () => {
                 }`}>
                   {weightHistory.length > 1 
                     ? (weightHistory[weightHistory.length - 1].value - weightHistory[0].value).toFixed(1) 
-                    : '0'} lbs
+                    : '0'} kg
                 </span>
               </div>
             </div>
@@ -267,8 +270,8 @@ const HealthPage = () => {
                       <td className="py-2 px-4">{entry.protein}g</td>
                       <td className="py-2 px-4">{entry.carbs}g</td>
                       <td className="py-2 px-4">{entry.fat}g</td>
-                      <td className="py-2 px-4">{entry.water}oz</td>
-                      <td className="py-2 px-4">{entry.weight ? `${entry.weight} lbs` : '-'}</td>
+                      <td className="py-2 px-4">{entry.water}L</td>
+                      <td className="py-2 px-4">{entry.weight ? `${entry.weight} kg` : '-'}</td>
                       <td className="py-2 px-4 text-right">
                         <Button
                           variant="ghost"
@@ -367,12 +370,13 @@ const HealthPage = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="water" className="text-sm font-medium">Water (oz)</label>
+                <label htmlFor="water" className="text-sm font-medium">Water (L)</label>
                 <Input
                   id="water"
                   name="water"
                   type="number"
                   min="0"
+                  step="0.1"
                   value={formData.water}
                   onChange={handleChange}
                   placeholder="0"
@@ -381,7 +385,7 @@ const HealthPage = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="weight" className="text-sm font-medium">Weight (lbs)</label>
+                <label htmlFor="weight" className="text-sm font-medium">Weight (kg)</label>
                 <Input
                   id="weight"
                   name="weight"

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Weight } from 'lucide-react';
 import { format, parseISO, isValid } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -190,7 +190,7 @@ const GymPage = () => {
         <DashboardCard title="Weekly Volume" variant="magenta">
           <div className="flex flex-col items-center">
             <span className="text-3xl font-bold">{workoutStats.weeklyVolume.toLocaleString()}</span>
-            <span className="text-sm text-muted-foreground">lbs (sets × reps × weight)</span>
+            <span className="text-sm text-muted-foreground">kg (sets × reps × weight)</span>
           </div>
         </DashboardCard>
         
@@ -227,8 +227,8 @@ const GymPage = () => {
             dataKey="volume"
             xAxisDataKey="date"
             color="#00FFFF"
-            formatYAxis={(value) => `${value / 1000}k`}
-            formatTooltip={(value) => `${value.toLocaleString()} lbs`}
+            formatYAxis={(value) => `${(value / 1000).toFixed(1)}k`}
+            formatTooltip={(value) => `${value.toLocaleString()} kg`}
           />
         ) : (
           <div className="h-64 flex items-center justify-center text-muted-foreground">
@@ -252,7 +252,10 @@ const GymPage = () => {
                 {Object.entries(workoutStats.personalRecords).map(([exercise, record]) => (
                   <tr key={exercise} className="border-b border-border">
                     <td className="py-2 px-4">{exercise}</td>
-                    <td className="py-2 px-4 text-right font-bold">{record} lbs</td>
+                    <td className="py-2 px-4 text-right font-bold">
+                      <Weight size={16} className="inline mr-1" />
+                      {record} kg
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -318,9 +321,11 @@ const GymPage = () => {
                             <td className="py-1">{exercise.name}</td>
                             <td className="py-1 text-right">{exercise.sets}</td>
                             <td className="py-1 text-right">{exercise.reps}</td>
-                            <td className="py-1 text-right">{exercise.weight} lbs</td>
                             <td className="py-1 text-right">
-                              {(exercise.sets * exercise.reps * exercise.weight).toLocaleString()} lbs
+                              {exercise.weight} kg
+                            </td>
+                            <td className="py-1 text-right">
+                              {(exercise.sets * exercise.reps * exercise.weight).toLocaleString()} kg
                             </td>
                           </tr>
                         ))}
@@ -444,7 +449,7 @@ const GymPage = () => {
                         name="weight"
                         value={exercise.weight}
                         onChange={(e) => handleExerciseChange(index, e)}
-                        placeholder="Weight"
+                        placeholder="Weight (kg)"
                         min="0"
                         step="0.5"
                       />

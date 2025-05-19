@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Define types for our state
@@ -41,8 +40,8 @@ interface HealthEntry {
   protein: number; // grams
   carbs: number; // grams
   fat: number; // grams
-  water: number; // ounces
-  weight?: number; // optional weight tracking
+  water: number; // liters (was ounces)
+  weight?: number; // kilograms (was pounds)
 }
 
 interface Exercise {
@@ -50,7 +49,7 @@ interface Exercise {
   name: string;
   sets: number;
   reps: number;
-  weight: number; // in lbs or kg
+  weight: number; // in kg (was lbs)
 }
 
 interface WorkoutEntry {
@@ -73,6 +72,7 @@ interface UserProfile {
   name: string;
   avatar?: string;
   goals: Goals;
+  useMetricSystem: boolean; // New property to track unit preference
 }
 
 interface AppState {
@@ -119,6 +119,13 @@ interface AppContextType {
   
   updateProfile: (profile: Partial<UserProfile>) => void;
   toggleDarkMode: () => void;
+  
+  // Unit conversion utilities
+  convertToKg: (lbs: number) => number;
+  convertToLbs: (kg: number) => number;
+  convertToLiters: (oz: number) => number;
+  convertToOz: (liters: number) => number;
+  toggleUnitSystem: () => void;
   
   // Derived data
   getNetWorth: () => number;
@@ -199,8 +206,8 @@ const initialState: AppState = {
         protein: 140,
         carbs: 200,
         fat: 70,
-        water: 64,
-        weight: 175
+        water: 1.9, // Updated from 64 oz to 1.9 liters
+        weight: 79.4 // Updated from 175 lbs to 79.4 kg
       },
       {
         id: '2',
@@ -209,15 +216,15 @@ const initialState: AppState = {
         protein: 150,
         carbs: 220,
         fat: 75,
-        water: 72,
-        weight: 175.5
+        water: 2.1, // Updated from 72 oz to 2.1 liters
+        weight: 79.6 // Updated from 175.5 lbs to 79.6 kg
       }
     ],
     goals: {
       dailyCalories: 2200,
       dailyProtein: 160,
-      dailyWater: 80,
-      targetWeight: 170
+      dailyWater: 2.4, // Updated from 80 oz to 2.4 liters
+      targetWeight: 77 // Updated from 170 lbs to 77 kg
     }
   },
   workouts: [
@@ -226,7 +233,7 @@ const initialState: AppState = {
       date: '2025-05-19',
       name: 'Upper Body Day',
       exercises: [
-        { id: '101', name: 'Bench Press', sets: 4, reps: 8, weight: 185 },
+        { id: '101', name: 'Bench Press', sets: 4, reps: 8, weight: 84 }, // Updated from 185 lbs to 84 kg
         { id: '102', name: 'Pull-ups', sets: 4, reps: 10, weight: 0 }
       ],
       duration: 45
@@ -236,8 +243,8 @@ const initialState: AppState = {
       date: '2025-05-17',
       name: 'Leg Day',
       exercises: [
-        { id: '201', name: 'Squats', sets: 4, reps: 10, weight: 225 },
-        { id: '202', name: 'Lunges', sets: 3, reps: 12, weight: 40 }
+        { id: '201', name: 'Squats', sets: 4, reps: 10, weight: 102 }, // Updated from 225 lbs to 102 kg
+        { id: '202', name: 'Lunges', sets: 3, reps: 12, weight: 18 } // Updated from 40 lbs to 18 kg
       ],
       duration: 50,
       notes: 'Felt strong today'
@@ -249,9 +256,10 @@ const initialState: AppState = {
     goals: {
       dailyCalories: 2200,
       dailyProtein: 160,
-      dailyWater: 80,
-      targetWeight: 170
-    }
+      dailyWater: 2.4, // Updated from 80 oz to 2.4 liters
+      targetWeight: 77 // Updated from 170 lbs to 77 kg
+    },
+    useMetricSystem: true // Default to metric system
   },
   isDarkMode: true
 };
@@ -280,6 +288,33 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     localStorage.setItem('appState', JSON.stringify(state));
   }, [state]);
+
+  // Unit conversion utilities
+  const convertToKg = (lbs: number): number => {
+    return parseFloat((lbs / 2.20462).toFixed(1));
+  };
+
+  const convertToLbs = (kg: number): number => {
+    return parseFloat((kg * 2.20462).toFixed(1));
+  };
+
+  const convertToLiters = (oz: number): number => {
+    return parseFloat((oz * 0.0295735).toFixed(1));
+  };
+
+  const convertToOz = (liters: number): number => {
+    return parseFloat((liters / 0.0295735).toFixed(0));
+  };
+
+  const toggleUnitSystem = () => {
+    setState(prev => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        useMetricSystem: !prev.profile.useMetricSystem
+      }
+    }));
+  };
 
   // Experience methods
   const addExperience = (experience: Omit<Experience, 'id'>) => {
@@ -501,6 +536,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     ];
   };
 
+  // Update getWeightHistory to correctly handle metric units
   const getWeightHistory = () => {
     return state.health.entries
       .filter(entry => entry.weight)
@@ -574,7 +610,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       getNetWorthHistory,
       getWeightHistory,
       getCalorieProgress,
-      getWorkoutStats
+      getWorkoutStats,
+      // Add conversion utilities
+      convertToKg,
+      convertToLbs,
+      convertToLiters,
+      convertToOz,
+      toggleUnitSystem
     }}>
       {children}
     </AppContext.Provider>
