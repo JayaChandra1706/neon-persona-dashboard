@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAppContext } from '@/contexts/AppContext';
 import DashboardCard from '@/components/DashboardCard';
@@ -39,10 +38,10 @@ const HealthPage = () => {
       value: entry.weight as number
     }));
   
-  // Calculate daily progress
-  const calorieProgress = todayEntry ? (todayEntry.calories / state.health.goals.dailyCalories) * 100 : 0;
-  const proteinProgress = todayEntry ? (todayEntry.protein / state.health.goals.dailyProtein) * 100 : 0;
-  const waterProgress = todayEntry ? (todayEntry.water / state.health.goals.dailyWater) * 100 : 0;
+  // Calculate daily progress - UPDATE HERE to use profile.goals
+  const calorieProgress = todayEntry ? (todayEntry.calories / state.profile.goals.dailyCalories) * 100 : 0;
+  const proteinProgress = todayEntry ? (todayEntry.protein / state.profile.goals.dailyProtein) * 100 : 0;
+  const waterProgress = todayEntry ? (todayEntry.water / state.profile.goals.dailyWater) * 100 : 0;
   
   // Format dates
   const formatDate = (dateString: string) => {
@@ -143,7 +142,7 @@ const HealthPage = () => {
                   {todayEntry ? todayEntry.calories : 0}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  of {state.health.goals.dailyCalories}
+                  of {state.profile.goals.dailyCalories}
                 </span>
               </div>
             </ProgressCircle>
@@ -161,7 +160,7 @@ const HealthPage = () => {
                   {todayEntry ? todayEntry.protein : 0}g
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  of {state.health.goals.dailyProtein}g
+                  of {state.profile.goals.dailyProtein}g
                 </span>
               </div>
             </ProgressCircle>
@@ -179,7 +178,7 @@ const HealthPage = () => {
                   {todayEntry ? todayEntry.water : 0}oz
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  of {state.health.goals.dailyWater}oz
+                  of {state.profile.goals.dailyWater}oz
                 </span>
               </div>
             </ProgressCircle>
@@ -210,7 +209,7 @@ const HealthPage = () => {
               <div>
                 <span className="block">Target</span>
                 <span className="font-medium text-foreground">
-                  {state.health.goals.targetWeight || 'Not set'} lbs
+                  {state.profile.goals.targetWeight || 'Not set'} lbs
                 </span>
               </div>
               <div>
